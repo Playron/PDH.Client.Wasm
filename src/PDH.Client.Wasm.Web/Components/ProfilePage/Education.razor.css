@@ -1,0 +1,33 @@
+﻿h2{
+    margin-bottom: 25px;
+}
+
+.education-name-content{
+    display: flex;
+    align-items: center;
+}
+
+.education-name-content{
+    left: 10%;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.education-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.education-place-name{
+    font-size: 12px;
+    font-weight: 300;
+    margin-top: 25px;
+}
+
+.school-icon{
+    width: 15%;
+}
+
+.education-list {
+    height: 20%
+}

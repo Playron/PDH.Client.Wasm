@@ -1,0 +1,54 @@
+﻿
+@media only screen and (min-width: 1000px) {
+    .content-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 40px;
+        margin-left: 40px;
+        margin-right: 40px;
+    }
+
+    .content-first-column {
+        display: flex;
+        flex-direction: column;
+        width: 60%;
+    }
+
+    .content-second-column {
+        display: flex;
+        flex-direction: column;
+        width: 35%;
+    }
+
+
+    .education{
+        min-height: 200px;
+    }
+}
+
+@media only screen and (max-width: 1000px) {
+    .content-container {
+        margin-top: 40px;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .content-first-column {
+        width: 95%;
+    }
+
+    .content-second-column {
+        width: 95%;
+    }
+}
+
+.box {
+    padding: 20px;
+    background-color: #E6FFFD;
+    border-radius: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 7px 0px;
+}
+
+.education {
+    min-height: 200px;
+}

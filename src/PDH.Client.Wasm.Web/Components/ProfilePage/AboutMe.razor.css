@@ -1,0 +1,16 @@
+﻿h2{
+    margin-bottom: 30px;
+}
+
+.per-text {
+    font-size: 18px;
+    margin-bottom: 25px;
+    text-align: justify;
+    line-height: 35px;
+}
+
+@media only screen and (max-width: 600px) {
+    .per-text {
+        font-size: 13px;
+    }
+}

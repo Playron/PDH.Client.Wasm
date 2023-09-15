@@ -1,0 +1,32 @@
+﻿@using PDH.Client.Wasm.Core.PDH.Services.Dtos
+<div class="education-container">
+    <h2>Education</h2>
+    @foreach (var education in Educations)
+    {
+        <div class="education-list">
+            <div class="education-name-content">
+                <div class="school-icon">
+                    <i class="fa-solid fa-school fa-xl"></i>
+                </div>
+                <div class="education-text">
+                    <p class="education-name-content">@education.StudyName</p>
+                    <p class="education-place-name">@education.University (@education.FromYear - @education.ToYear)</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code
+{
+    private IEnumerable<PDH.Client.Wasm.Core.PDH.Services.Dtos.Education> Educations => new[]
+    {
+        new PDH.Client.Wasm.Core.PDH.Services.Dtos.Education
+        {
+            StudyName = "Natural Science with Teacher Education",
+            University = "Norwegian University of Science and Technology",
+            FromYear = 2016,
+            ToYear = 2021
+        }
+    };
+}

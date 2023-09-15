@@ -1,0 +1,10 @@
+<div style="display: flex; flex-direction: column">
+    <h2 style="text-align: center">@(string.IsNullOrEmpty(Text) ? "Laster..." : Text)</h2>
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+</div>
+
+@code
+{
+    [Parameter]
+    public string? Text { get; set; }
+}

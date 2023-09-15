@@ -1,0 +1,35 @@
+﻿@if (WorkExperiences is not null)
+{
+    <div class="work-experience-container">
+        <h2>Work Experience</h2>
+        <div class="work-experience-content-list">
+            @foreach (var experience in WorkExperiences)
+            {
+                <div class="work-experience-headline">
+                    <h3>@experience.Role - @experience.WorkPlace (@experience.FromYear - @experience.ToYear)</h3>
+                </div>
+                @if (experience.WorkItems != null)
+                {
+                    <div class="work-experience-point-list">
+                        @foreach (var point in experience.WorkItems)
+                        {
+                            <div class="work-experience-point">
+                                <i class="fa-solid fa-circle fa-2xs"></i>
+                                <div class="work-point-text">
+                                    <p>@point</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                <MudDivider />
+            }
+        </div>
+    </div>
+}
+
+@code
+{
+    [Parameter]
+    public IEnumerable<Core.PDH.Services.Dtos.WorkExperience>? WorkExperiences { get; set; }
+}

@@ -1,7 +1,12 @@
-﻿<CascadingAuthenticationState>
+﻿@using PDH.Client.Wasm.Web.Components
+
+<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <Authorizing>
+                    <LoadingBar Text="Autentiserer..." />
+                </Authorizing>
                 <NotAuthorized>
                     @if (context.User.Identity?.IsAuthenticated != true)
                     {

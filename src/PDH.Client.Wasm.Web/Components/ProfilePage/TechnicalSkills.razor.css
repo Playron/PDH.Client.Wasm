@@ -1,0 +1,42 @@
+﻿.technical-skills-container{
+    width: 100%;
+}
+
+.technical-skills-list{
+    display: flex;
+    flex-direction: column;
+}
+
+.tecnical-skill-text{
+    display:flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.technical-skill{
+    margin-bottom: 10px;
+}
+
+.skill-level-bar {
+    margin-bottom: 10px;
+}
+
+.competence-name{
+    font-size: 20px;
+    font-weight: 100;
+}
+
+.skill-name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+h2{
+    margin-bottom: 25px;
+}
+
+@media only screen and (max-width: 600px) {
+    .tecnical-skill-text p {
+        font-size: 14px;
+    }
+}

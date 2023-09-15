@@ -1,0 +1,28 @@
+﻿@typeparam TEnum
+
+<div class="level-bar-container">
+    <div class="level-bar">
+        <div class="bar-filled" style="@FilledBarStyle"></div>
+        <div class="bar" style="@NotFilledBarStyle"></div>
+    </div>
+</div>
+
+
+@code
+{
+    [Parameter]
+    public TEnum SkillEnum { get; set; } = default!;
+
+    [Parameter]
+    public int SkillLevel { get; set; }
+
+    private int NumberOfEnumElements => Enum.GetNames((typeof(TEnum))).Length;
+
+    private decimal StyleFilledPercentage => ((decimal)SkillLevel / (decimal)NumberOfEnumElements) * 100;
+
+    private decimal StyleNotFilledPercentage => 100 - StyleFilledPercentage;
+
+    private string FilledBarStyle => $"width: {(int)StyleFilledPercentage}%;";
+
+    private string NotFilledBarStyle => $"width: {(int)StyleNotFilledPercentage}%;";
+}

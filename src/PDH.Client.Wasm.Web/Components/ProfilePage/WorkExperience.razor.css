@@ -1,0 +1,48 @@
+﻿h2 {
+    margin-bottom: 25px;
+}
+
+p {
+    text-align: justify;
+}
+
+.work-experience-point{
+    display: flex;
+    align-items: center;
+}
+
+.work-experience-headline {
+    margin-top: 35px;
+    margin-bottom: 30px;
+}
+
+.work-point-text {
+    position: absolute;
+    left: 5%;
+}
+
+.work-experience-point-list{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.work-experience-point{
+    position: relative;
+    margin-bottom: 45px;
+}
+
+.work-point-text p{
+    font-size: 16px;
+    font-weight: 300;
+}
+
+@media only screen and (max-width: 600px) {
+    .work-experience-headline h3 {
+        font-size: 14px;
+    }
+
+    .work-experience-container p{
+        font-size: 13px;
+    }
+}

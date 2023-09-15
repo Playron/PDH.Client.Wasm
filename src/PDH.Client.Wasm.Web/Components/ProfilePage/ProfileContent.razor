@@ -1,0 +1,56 @@
+﻿@using PDH.Client.Wasm.Core.PDH.Services
+@using PDH.Client.Wasm.Core.PDH.Services.Dtos
+@inject ClientService ClientService;
+
+<div class="content-container">
+    @if (SkillList is not null)
+    {
+        <div class="content-first-column">
+            <div class="about-me box">
+                <AboutMe/>
+            </div>
+            <br/>
+            <div class="projects box">
+                <MyProjects />
+            </div>
+            <br/>
+            <div class="work-experience box">
+                <WorkExperience WorkExperiences="SkillList.WorkExperiences" />
+            </div>
+        </div>
+        <br/>
+        <div class="content-second-column">
+            <div class="contact-me box">
+                <ContactMe />
+            </div>
+            <br />
+            <div class="skill-level box">
+                <TechnicalSkills Skills="SkillList.TechnicalSkills" />
+            </div>
+            <br />
+            <div class="education box">
+                <Education />
+            </div>
+            <br/>
+            <div class="languages box">
+                <SpokenLanguages LanguageSkills="SkillList.LanguageSkills" />
+            </div>
+            <br/>
+        </div>
+    }
+    else
+    {
+        <div style="display: flex; justify-content: center; align-items: center; height: 40vh; width: 100%;">
+            <LoadingBar />    
+        </div>
+    }
+</div>
+
+@code
+{
+    private LanguageWorkAndTechnicalList? SkillList { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        SkillList = await ClientService.GetAllLists();
+    }
+}

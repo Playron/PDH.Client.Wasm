@@ -1,0 +1,46 @@
+﻿@using PDH.Client.Wasm.Core.PDH.Services
+@using PDH.Client.Wasm.Core.PDH.Services.Dtos
+@using PDH.Client.Wasm.Core.PDH.Services.Enums
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@inject ClientService ClientService;
+
+@if (Skills is not null && Skills.Any())
+{
+    <div class="technical-skills-container">
+        <div class="technical-skills-list">
+            <div style=" display: flex; justify-content: space-between; height: 30px; margin-bottom: 5px;">
+                <h2>Technical skills</h2>
+                <AuthorizeView>
+                    <MudButton Size="Size.Small" Variant="Variant.Filled" OnClick="AddNewSkill">Legg Til</MudButton>
+                </AuthorizeView>
+            </div>
+            @foreach (var skill in Skills)
+            {
+                <div class="technical-skill">
+                    <div class="tecnical-skill-text">
+                        <p class="skill-name">@skill.Skill</p>
+                        <p class="competence-name">@skill.TechnicalSkillLevel</p>
+                    </div>
+                    <div class="skill-level-bar">
+                        <LevelBar
+                            TEnum="TechnicalSkillLevelEnum"
+                            SkillEnum="skill.TechnicalSkillLevel"
+                            SkillLevel="(int)skill.TechnicalSkillLevel" />
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public IEnumerable<TechnicalSkill>? Skills { get; set; }
+
+    private async Task AddNewSkill()
+    {
+        await ClientService.AddNewTechnicalSkill(new AddNewTechnicalSkillCommand("React", TechnicalSkillLevelEnum.Intermediate));
+    }
+}

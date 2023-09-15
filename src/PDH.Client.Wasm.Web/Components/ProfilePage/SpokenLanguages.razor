@@ -1,0 +1,32 @@
+﻿@using PDH.Client.Wasm.Core.PDH.Services.Dtos
+@using PDH.Client.Wasm.Core.PDH.Services.Enums
+
+@if (LanguageSkills is not null)
+{
+    <div class="spoken-languages-container">
+        <h2>Spoken languages</h2>
+        @foreach (var languageSkill in LanguageSkills)
+        {
+            <div class="language-skill-level">
+                <p>@((LanguageLevelEnum)languageSkill.Level == LanguageLevelEnum.NativeSpeaker ? "Native speaker" : (LanguageLevelEnum)languageSkill.Level)</p>
+            </div>
+            <div class="spoken-languages-content">
+                <div class="language-name">
+                    <p>@languageSkill.Name</p>
+                </div>
+                <div class="language-skill">
+                    <LevelBar 
+                        TEnum="LanguageLevelEnum"
+                        SkillEnum="languageSkill.Level"
+                        SkillLevel="(int)languageSkill.Level"/>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code
+{
+    [Parameter]
+    public IEnumerable<LanguageSkill>? LanguageSkills { get; set; }
+}

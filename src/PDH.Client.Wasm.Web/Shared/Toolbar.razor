@@ -1,0 +1,36 @@
+@using MudBlazor
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager Navigation;
+
+<MudAppBar Elevation="2">
+    <div class="toolbar-content">
+        <MudIconButton Href="/" Icon="@Icons.Material.Filled.Home" Color="Color.Primary" Variant="Variant.Outlined" />
+        <div>
+            <MudMenu Color="Color.Primary" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.Menu" AnchorOrigin="Origin.BottomRight">
+                <AuthorizeView>
+                    <Authorized>
+                        <MudMenuItem Href="/Sudoku" Icon="@Icons.Material.Outlined.Games">Sudoku</MudMenuItem>
+                        @* <MudMenuItem Href="/TicTacToe" Icon="@Icons.Material.Filled.VideogameAsset">TicTacToe</MudMenuItem> *@
+                        <MudMenuItem Href="/HouseholdInventory" Icon="@Icons.Material.Filled.Cyclone">På lager</MudMenuItem>
+                        <MudMenuItem Icon="@Icons.Material.Outlined.Logout" OnClick="@(() => Navigation.NavigateToLogout("authentication/logout"))">
+                            Log out
+                        </MudMenuItem>
+                    </Authorized>
+                    <NotAuthorized>
+                        <MudMenuItem Icon="@Icons.Material.Outlined.Logout" OnClick="@(() => Navigation.NavigateToLogout("authentication/login"))">
+                            Log in
+                        </MudMenuItem>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </MudMenu>
+        </div>
+    </div>
+</MudAppBar>
+
+<style>
+    .toolbar-content{
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+</style>

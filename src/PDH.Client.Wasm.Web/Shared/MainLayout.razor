@@ -1,18 +1,40 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
-
-    <main>
-        <div class="top-row px-4 auth">
-            <LoginDisplay/>
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+<MudLayout Class="mt-0 mb-0">
+    <Toolbar />
+    <MudMainContent Class="mt-0 mb-0">
+        <div class="mt-0 mb-0">
             @Body
-        </article>
-    </main>
-</div>
+        </div>
+    </MudMainContent>
+</MudLayout>
+
+<MudThemeProvider Theme="MudTheme"/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+@code
+{
+    private MudTheme MudTheme = new()
+    {
+        Palette = new PaletteLight()
+        {
+            Primary = "#AEE2FF",
+            Secondary = "#AEE2FF",
+            Info = "#001f3f",
+            Success = "#2ECC40",
+            Warning = "#FF851B",
+            Error = "#F012BE",
+            AppbarBackground = "#1A1A1D",
+        },
+
+        Typography = new Typography()
+        {
+            Default = new Default()
+            {
+                FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
+                LetterSpacing = ".0075em"
+            }
+        }
+    };
+}

@@ -1,0 +1,30 @@
+﻿h2{
+    margin-bottom: 25px;
+}
+
+.spoken-languages-content{
+    display: flex;
+    width: 100%;
+    margin-bottom: 30px;
+    align-items: center;
+}
+
+.language-name{
+    width:30%;
+}
+
+.language-skill {
+    width: 65%;
+}
+
+.language-skill-level{
+    display: flex;
+    flex-direction: row-reverse;
+    width: 95%;
+    margin-bottom: 10px;
+}
+
+.language-skill-level p {
+    font-size: 12px;
+    font-weight: 400;
+}

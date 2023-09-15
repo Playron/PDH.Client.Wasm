@@ -1,13 +1,17 @@
 ﻿@page "/"
+@attribute [Authorize]
+
 @using PDH.Client.Wasm.Core.PDH.Services
 @using PDH.Client.Wasm.Core.PDH.Services.Enums
-@inject ClientService Clientservice 
-<button @onclick="AddTechnicalSkill">Test</button>
+@using PDH.Client.Wasm.Web.Components.ProfilePage
+@using Microsoft.AspNetCore.Authorization
+
+@inject ClientService ClientService 
+
+<PageTitle>YOOOOOO!</PageTitle>
+<ProfileBar />
+<ProfileContent />
 
 @code {
-    private async Task AddTechnicalSkill()
-    {
-        await Clientservice.AddNewTechnicalSkill(new AddNewTechnicalSkillCommand("Blazor Server", TechnicalSkillLevelEnum.Expert));
-    }
 }
 
