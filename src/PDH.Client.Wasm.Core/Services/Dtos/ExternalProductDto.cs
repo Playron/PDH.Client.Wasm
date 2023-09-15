@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PDH.Client.Wasm.Core.PDH.Services.Dtos;
+namespace PDH.Client.Wasm.Core.Services.Dtos;
 
 public class ExternalProductDto
 {

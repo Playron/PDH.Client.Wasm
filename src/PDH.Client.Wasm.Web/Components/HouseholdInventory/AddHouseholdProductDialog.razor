@@ -1,0 +1,117 @@
+@using PDH.Client.Wasm.Core.PDH.Services
+@using PDH.Client.Wasm.Core.Services
+@using PDH.Client.Wasm.Core.Services.Dtos
+
+@inject ClientService ClientService;
+
+<MudDialog>
+    <DialogContent>
+        @if (FormModel is not null)
+        {
+            <MudForm Model="FormModel">
+                <MudGrid Spacing="2">
+                    <MudItem xs="6">
+                        <MudTextField T="string" @bind-Value="FormModel.Name" Label="Produktnavn" Variant="Variant.Outlined" />
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudTextField T="string" @bind-Value="FormModel.Brand" Label="Produsent" Variant="Variant.Outlined" />
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudTextField T="string" @bind-Value="FormModel.Ean" Label="Ean-nummer" Variant="Variant.Outlined" />
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudSelect T="ProductCategory" ToStringFunc="category => category.ProductCategoryMapper()" @bind-Value="FormModel.ProductGroup" Variant="Variant.Outlined" Label="Produktkategori">
+                            @foreach (var type in Enum.GetValues<ProductCategory>())
+                            {
+                                <MudSelectItem Value="@type" />
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudSelect ToStringFunc="arg => arg.WeightTypeMapper() " T="WeightUnit" @bind-Value="FormModel.WeightUnit" Variant="Variant.Outlined" Label="Vekttype">
+                            @foreach (var type in Enum.GetValues<WeightUnit>())
+                            {
+                                <MudSelectItem Value="@type" />
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudTextField T="string" @bind-Value="FormModel.Weight" Label="Vekt for type" Variant="Variant.Outlined" />
+                    </MudItem>
+                </MudGrid>
+            </MudForm>
+        }
+    </DialogContent>
+    <DialogActions>
+        <div style="display: flex; flex-direction: row-reverse">
+            <MudButton Disabled="!IsSuccess" Variant="Variant.Outlined" OnClick="AddProduct">Legg til</MudButton>
+        </div>
+    </DialogActions>
+</MudDialog>
+
+@code
+{
+    [Parameter]
+    public ProductInfo? Product { get; set; }
+    
+    [Parameter]
+    public HouseholdProductDto? UpdateProduct { get; set; }
+    
+    [Parameter]
+    public EventCallback<bool> ProductAdded { get; set; }
+
+    public HouseholdProductDto? FormModel { get; set; }
+    
+    private bool IsSuccess => FormModel!.GetType().GetProperties()
+        .All(p => p.GetValue(FormModel) != null);
+
+    protected override void OnInitialized()
+    {
+        if (Product is not null)
+        {
+            FormModel = new HouseholdProductDto
+            {
+                Name = Product.Name,
+                Brand = Product.Name,
+                Ean = Product.Ean,
+                WeightUnit = WeightUnit.None,
+                ProductGroup = ProductCategory.None,
+                Weight = ""
+            };
+        }
+        else
+        {
+            if (UpdateProduct != null)
+                FormModel = new HouseholdProductDto
+                {
+                    Name = UpdateProduct.Name,
+                    Brand = UpdateProduct.Name,
+                    Ean = UpdateProduct.Ean,
+                    WeightUnit = UpdateProduct.WeightUnit,
+                    ProductGroup = UpdateProduct.ProductGroup,
+                    Weight = UpdateProduct.Weight
+                };
+        }
+    }
+    
+    private async Task AddProduct()
+    {
+        var success = true;
+        try
+        {
+            if (Product is not null)
+            {
+                await ClientService.AddHouseholdProduct(FormModel!);
+            }
+            else
+            {
+                await ClientService.UpdateHouseholdProduct(UpdateProduct!.Id, FormModel!);
+            }
+        }
+        catch (Exception)
+        {
+            success = false;
+        }
+        await ProductAdded.InvokeAsync(success);
+    }
+}

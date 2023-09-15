@@ -1,17 +1,19 @@
 ﻿@page "/"
 @attribute [Authorize]
+@inject ClientService ClientService;
 
-@using PDH.Client.Wasm.Core.PDH.Services
-@using PDH.Client.Wasm.Core.PDH.Services.Enums
 @using PDH.Client.Wasm.Web.Components.ProfilePage
 @using Microsoft.AspNetCore.Authorization
+@using PDH.Client.Wasm.Core.Services
 
-@inject ClientService ClientService 
-
-<PageTitle>YOOOOOO!</PageTitle>
+<PageTitle>PDH Client Webassembly!</PageTitle>
 <ProfileBar />
 <ProfileContent />
 
 @code {
+    protected override async Task OnInitializedAsync()
+    {
+        await ClientService.GetConfig();
+    }
 }
 

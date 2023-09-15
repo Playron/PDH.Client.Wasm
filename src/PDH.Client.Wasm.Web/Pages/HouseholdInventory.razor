@@ -1,0 +1,176 @@
+@page "/HouseholdInventory"
+@attribute [Authorize]
+
+@inject HouseholdProductService HouseholdService;
+@inject IDialogService DialogService; 
+@inject ClientService ClientService;
+@inject ISnackbar Snackbar;
+
+@using PDH.Client.Wasm.Core.HouseholdInventory
+@using PDH.Client.Wasm.Core.PDH.Services
+@using Microsoft.AspNetCore.Authorization
+@using PDH.Client.Wasm.Core.Services
+@using PDH.Client.Wasm.Core.Services.Dtos
+@using PDH.Client.Wasm.Web.Components.HouseholdInventory
+
+<div class="ma-3 household-intentory-container">
+    @if (AddedProducts is not null)
+    {
+        <MudCard Class="ma-5" Elevation="6" Style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <MudText Class="mb-4" Style="width: 80%" Typo="Typo.h3">Søk etter produkt</MudText>
+            <div style="width: 80%;">
+                <MudAutocomplete
+                    T="ProductInfo"
+                    Label="Søk etter produkt"
+                    @bind-Value="SelectedProduct"
+                    SearchFunc="@SearchForProduct"
+                    ResetValueOnEmptyText="true"
+                    AdornmentIcon="@Icons.Material.Filled.Search"
+                    AdornmentColor="Color.Primary"
+                    DebounceInterval="1000"
+                    ToStringFunc="@(e => (e is null ? null : $"{e.Name}") ?? string.Empty)"
+                    FullWidth="true"
+                    IconSize="Size.Large"
+                    ShowProgressIndicator="true"
+                    Variant="Variant.Outlined" />
+            </div>
+            @if (SelectedProduct is not null)
+            {
+                <MudCard Style="width: 80%;" Elevation="4" Class="mt-5">
+                    <div class="ma-5 product-information">
+                        <MudImage ObjectFit="ObjectFit.ScaleDown" Src="@SelectedProduct.Image" Height="150" />
+                        <div class="ml-5">
+                            <MudText Typo="Typo.h6">@SelectedProduct.Name</MudText>
+                            <MudText Class="mt-5" Typo="Typo.body1">@SelectedProduct.Description</MudText>
+                        </div>
+                    </div>
+                    <div class="ma-3" style="display: flex; justify-content: end">
+                        <MudButton OnClick="OpenAddHouseHoldProuctDialog" Variant="Variant.Filled" Color="Color.Success">Legg til i beholdning</MudButton>
+                    </div>
+                </MudCard>
+            }
+            @if (AddedProducts is not null)
+            {
+                <div style="width: 80%;" class="ma-5">
+                    <MudText Class="ma-4" Typo="Typo.h6">Allerede lagrede produkter</MudText>
+                    <MudTable Elevation="3" T="HouseholdProductDto" Dense="true" Items="AddedProducts" Style="width: 100%;" OnRowClick="product => UpdateProduct(product)">
+                        <HeaderContent>
+                            <MudTh>Navn</MudTh>
+                            <MudTh>Produsent</MudTh>
+                            <MudTh>Produktkategori</MudTh>
+                            <MudTh>Vekttype</MudTh>
+                            <MudTh>Vekt for type</MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd>@context.Name</MudTd>
+                            <MudTd>@context.Brand</MudTd>
+                            <MudTh>@context.ProductGroup.ProductCategoryMapper()</MudTh>
+                            <MudTd>@context.WeightUnit.WeightTypeMapper()</MudTd>
+                            <MudTd>@context.Weight</MudTd>
+                            <MudTd><MudIconButton Icon="@Icons.Material.Outlined.Delete" OnClick="() => DeleteProduct(context.Id)">Slett</MudIconButton></MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </div>
+            }
+        </MudCard>
+    }
+    else
+    {
+        <LoadingBar />
+    }
+</div>
+
+<style>
+    .household-intentory-container{
+        
+    }
+    .product-information{
+        display: flex;
+        justify-content: space-around;
+    }
+</style>
+
+@code {
+    private IEnumerable<HouseholdProductDto>? AddedProducts { get; set; }
+    
+    private ProductInfo? SelectedProduct { get; set; }
+    
+    private IDialogReference? Dialog { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        AddedProducts = await ClientService.GetAllHouseholdProducts();
+    }
+    private async Task<IEnumerable<ProductInfo>?> SearchForProduct(string term)
+    {
+        if (!string.IsNullOrEmpty(term))
+        {
+            var smooth = await HouseholdService.SearchForHouseholdProductAsync(term);
+            return smooth.ProductInfo;
+        }
+        return Enumerable.Empty<ProductInfo>();
+    }
+
+    private async Task OpenAddHouseHoldProuctDialog()
+    {
+        var parameters = new DialogParameters
+        {
+            ["Product"] = SelectedProduct,
+            ["UpdateProduct"] = null,
+            ["ProductAdded"] = EventCallback.Factory.Create<bool>(this, ProductAdded)
+        };
+        var options = new DialogOptions
+        {
+            MaxWidth = MaxWidth.Large,
+            FullWidth = true
+        };
+        Dialog = await DialogService.ShowAsync<AddHouseholdProductDialog>("Legg til produkt?", parameters, options);
+    }
+
+    private async Task ProductAdded(bool isSuccess)
+    {
+        Dialog!.Close();
+        if (isSuccess)
+            Snackbar.Add("Produktet ble lagt til", Severity.Success);
+        else
+            Snackbar.Add("Produktet finnes fra før", Severity.Error);
+        AddedProducts = await ClientService.GetAllHouseholdProducts();
+    }
+
+    private async Task UpdateProduct(TableRowClickEventArgs<HouseholdProductDto> product)
+    {
+        var parameters = new DialogParameters
+        {
+            ["Product"] = null,
+            ["UpdateProduct"] = product.Item,
+            ["ProductAdded"] = EventCallback.Factory.Create<bool>(this, ProductAdded)
+        };
+        var options = new DialogOptions
+        {
+            MaxWidth = MaxWidth.Large,
+            FullWidth = true
+        };
+        Dialog = await DialogService.ShowAsync<AddHouseholdProductDialog>("Oppdater produkt", parameters, options);
+    }
+
+    private async Task DeleteProduct(Guid id)
+    {
+        try
+        {
+            bool? result = await DialogService.ShowMessageBox(
+                "Ønsker du å slette produkt", 
+                "Sletting kan ikke omgjøres!", 
+                yesText:"Slett", cancelText:"Avbryt");
+            if (result != null)
+            {
+                await ClientService.DeleteHouseholdProduct(id);
+                AddedProducts = await ClientService.GetAllHouseholdProducts();
+                Snackbar.Add("Produktet ble slettet", Severity.Success);
+            }
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Noe gikk galt", Severity.Success);
+        }
+    }
+}

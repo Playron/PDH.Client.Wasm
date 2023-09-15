@@ -1,4 +1,4 @@
-using PDH.Client.Wasm.Core.PDH.Services.Dtos;
+using PDH.Client.Wasm.Core.Services.Dtos;
 
 namespace PDH.Client.Wasm.Core.PDH.Services;
 

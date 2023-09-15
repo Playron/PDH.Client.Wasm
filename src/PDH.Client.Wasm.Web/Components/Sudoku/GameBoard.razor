@@ -1,0 +1,174 @@
+<div class="board-wrapper">
+    <div class="board-toolbar">
+        <MudButton Variant="Variant.Outlined" OnClick="() => BoardActionHasHappened(BoardAction.BackToUserSaves)" StartIcon="@Icons.Material.Outlined.ArrowBack">Tilbake</MudButton>
+        <MudMenu Color="Color.Warning" Variant="Variant.Outlined" Label="Options" StartIcon="@Icons.Material.Outlined.Menu" AnchorOrigin="Origin.BottomRight">
+            <MudMenuItem OnClick="() => BoardActionHasHappened(BoardAction.Reset)">Nullstill brett</MudMenuItem>
+            <MudMenuItem OnClick="() => BoardActionHasHappened(BoardAction.NewGame)">Nytt spillt</MudMenuItem>
+            <MudMenuItem OnClick="() => BoardActionHasHappened(BoardAction.GetSolution)">Få løsning</MudMenuItem>
+            <MudMenuItem OnClick="() => BoardActionHasHappened(BoardAction.Solve)">Løs</MudMenuItem>
+        </MudMenu>
+    </div>
+    <div>
+        @for (int x = 0; x <= 8; x++)
+        {
+            <div style="@GetBoldLines(x, "2px")" class="sudoku-line">
+                @for (int y = 0; y <= 8; y++)
+                {
+                    var cell = Board!.Cells[x, y];
+                    <div style="@GetBoldCols(y, "3px") @CellStyle(cell, SelectedCell)" class="sudoku-cell-@IsSolved()" @onclick="async () => await SetSelectedCell(cell)">
+                        @if (cell.Value != 0)
+                        {
+                            <p>@cell.Value</p>
+                        }
+                    </div>
+                }
+            </div>
+        }
+        <div class="action-btn-group" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="save-game-bar mt-2">
+                <MudTextField Style="width: 95%" Variant="Variant.Outlined" T="string" @bind-Value="Board!.Name" Label="Spillnavn" />
+                <MudButton Class="mt-1" Style="width: 150px;" Variant="Variant.Outlined" OnClick="async () => await SaveGameChanged.InvokeAsync(Board?.Name ?? string.Empty)" StartIcon="@Icons.Material.Outlined.Save">Lagre</MudButton>
+            </div>
+            <div class="undo-redo-btn">
+                <MudButton Variant="Variant.Outlined" Color="Color.Warning" OnClick="() => BoardActionHasHappened(BoardAction.Redo)">Redo</MudButton>
+                <MudButton Class="mr-1" Variant="Variant.Outlined" Color="Color.Error" OnClick="() => BoardActionHasHappened(BoardAction.Undo)">Angre</MudButton>
+            </div>
+        </div>
+        <MudOverlay Visible="IsFindingSolution" DarkBackground="true" AutoClose="true" />
+    </div>
+</div>
+<style>
+    .sudoku-line{
+        display: flex;
+    }
+    .board-toolbar{
+        display: flex; 
+        justify-content: space-between;
+        margin-bottom: 5px;
+    }
+    .sudoku-cell-unsolved{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        width: 50px;
+        font-size: 25px;
+        border: 1px solid black;
+    }
+    
+    .sudoku-cell-solved{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        width: 50px;
+        font-size: 25px;
+        border: 1px solid black;
+        background: linear-gradient(to right, lightgreen 50%, transparent 0);
+        background-size: 200% 100%;
+        background-position: right;
+        animation: makeItfadeIn 1s 0s forwards;
+    }
+    
+    .action-btn-group{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 50px
+    }
+    
+    .save-game-bar{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+    
+    .save-game-bar button{
+        height: 54px;
+    }
+    
+    .undo-redo-btn{
+        display: flex; 
+        flex-direction: row-reverse;
+        align-items: center
+    }
+    
+    .undo-redo-btn button{
+        width: 73px;
+    }
+    
+    @@keyframes makeItfadeIn {
+      100% {
+        background-position: left;
+      }
+    }
+    
+    .sudoku-cell-unsolved:hover{
+        cursor: pointer;
+        background-color: lightgray !important;
+    }
+    
+    .sudoku-actions{
+        display: flex;
+        justify-content: space-evenly;
+    }
+    
+    @@media only screen and (max-width: 700px) {
+        .board-wrapper{
+            margin-bottom: 30px;
+        }
+        .sudoku-cell-unsolved{
+            display: flex;
+            max-height: 41px;
+            max-width: 41px;
+        }
+            
+        .sudoku-cell-solved{
+            display: flex;
+            max-height: 41px;
+            max-width: 41px;
+        }
+        .sudoku-actions{
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            height: 100px;
+            width: 100%;
+        }
+        .btn-group{
+            display: flex;
+            justify-content: space-evenly;
+            width: 100%;
+        }
+        
+        .action-btn-group{
+            height: 0px !important;
+        }
+        
+        .undo-redo-btn{
+            height: 0px;
+            margin-top: 13vh;
+            margin-right: 5vw;
+        }
+        
+        .undo-redo-btn > *{
+             height: 40px;
+         }
+        
+        .save-game-bar{
+            visibility: hidden;
+            height: 0;
+        }
+        
+        .board-toolbar > * {
+            height: 40px;
+        }
+        
+        .btn-group button{
+            width: 125px;
+        }
+    }    
+</style>

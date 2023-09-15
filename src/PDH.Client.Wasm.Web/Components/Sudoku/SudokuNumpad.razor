@@ -1,0 +1,76 @@
+<div class="sudoku-numpad">
+    @if (SelectedCell is not null)
+    {
+        <h3>Velg nummer</h3>
+    }
+    else
+    {
+        <p>Trykk på en åpen rute</p>
+    }
+    @{ var num = 1; }
+    @for (int i = 1; i <= 3; i++)
+    {
+        var value = i;
+        <div class="numpad-line" style="@CellIsSelected">
+            @for (int y = 1; y <= 3; y++)
+            {
+                var positionValue = GetPositionValue(i, y);
+                <div class="numpad-cell" @onclick="() => ChangeCellValue(positionValue)">
+                    <p>@num</p>
+                </div>
+                num++;
+            }
+        </div>
+    }
+</div>
+<style>
+    .sudoku-numpad{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-left: 80px;
+        width: 150px;
+    }
+    
+    .numpad-line{
+        display: flex;
+    }
+    
+    .numpad-cell{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        width: 50px;
+        font-size: 25px;
+        border: 1px solid black;
+    }
+    
+    .numpad-cell:hover{
+        cursor: pointer;
+        background-color: lightgray;
+    }
+    
+        @@media only screen and (max-width: 700px) {
+            h2{
+                font-size: 16px;
+            }
+            .numpad-cell{
+                 height: 45px;
+                 width: 45px;
+                 font-size: 22px;
+                 border: 1px solid black;
+            }
+            .sudoku-numpad{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 17vh;
+                margin-left: 5vw;
+                margin-bottom: 0px;
+            }
+        }    
+</style>

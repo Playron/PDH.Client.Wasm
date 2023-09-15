@@ -1,21 +1,28 @@
 using System.Net.Http.Json;
 using System.Text.Json;
-using PDH.Client.Wasm.Core.PDH.Services.Dtos;
+using Microsoft.Extensions.Configuration;
+using PDH.Client.Wasm.Core.PDH.Services;
+using PDH.Client.Wasm.Core.Services.Dtos;
+using System;  
+using System.Configuration;
+using Microsoft.Extensions.Configuration.Memory;
 
-namespace PDH.Client.Wasm.Core.PDH.Services;
+namespace PDH.Client.Wasm.Core.Services;
 
 public class ClientService
 {
     private readonly HttpClient _client;
+    private Config _config;
 
     private readonly JsonSerializerOptions? _serializerOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public ClientService(HttpClient client)
+    public ClientService(HttpClient client, Config config)
     {
         _client = client;
+        _config = config;
     }
 
     public async Task<IEnumerable<TechnicalSkill>?> GetAllTechnicalSkills()
@@ -46,14 +53,11 @@ public class ClientService
         return JsonSerializer.Deserialize<LanguageWorkAndTechnicalList>(json, _serializerOptions);
     }
 
-    public async Task<string?> SaveSudokuGame(SaveSudokuBoardCommand command)
+    public async Task SaveSudokuGame(SaveSudokuBoardCommand command)
     {
         var response = await _client.PostAsJsonAsync("sudokuGame", command);
 
         response.EnsureSuccessStatusCode();
-        var json = await response.Content.ReadAsStringAsync();
-
-        return JsonSerializer.Deserialize<string>(json, _serializerOptions);
     }
 
     public async Task<IEnumerable<UserSudokuGame>?> GetUserSavedGames(string userId)
@@ -135,6 +139,18 @@ public class ClientService
         var response = await _client.PostAsJsonAsync($"householdProduct/{id}", dto);
 
         return response.EnsureSuccessStatusCode();
+    }
+    
+    public async Task<Dictionary<string, string>> GetConfig()
+    {
+        var response = await _client.GetAsync("config");
+        response.EnsureSuccessStatusCode();
+
+        var result = await response.Content.ReadAsStringAsync();
+        var config = JsonSerializer.Deserialize<Dictionary<string, String>>(result);
+        _config.Properties = config!;
+        
+        return config!;
     }
 }
 

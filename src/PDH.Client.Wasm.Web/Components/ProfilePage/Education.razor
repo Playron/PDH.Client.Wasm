@@ -1,5 +1,4 @@
-﻿@using PDH.Client.Wasm.Core.PDH.Services.Dtos
-<div class="education-container">
+﻿<div class="education-container">
     <h2>Education</h2>
     @foreach (var education in Educations)
     {
@@ -19,9 +18,9 @@
 
 @code
 {
-    private IEnumerable<PDH.Client.Wasm.Core.PDH.Services.Dtos.Education> Educations => new[]
+    private IEnumerable<Core.Services.Dtos.Education> Educations => new[]
     {
-        new PDH.Client.Wasm.Core.PDH.Services.Dtos.Education
+        new Core.Services.Dtos.Education
         {
             StudyName = "Natural Science with Teacher Education",
             University = "Norwegian University of Science and Technology",

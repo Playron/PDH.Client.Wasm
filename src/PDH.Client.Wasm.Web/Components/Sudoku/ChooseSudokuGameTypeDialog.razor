@@ -1,0 +1,68 @@
+@using PDH.Client.Wasm.Core.PDH.Services
+@using PDH.Client.Wasm.Core.Services
+@using PDH.Client.Wasm.Core.Services.Dtos
+@using PDH.Client.Wasm.Core.Services.Sudoku
+@inject ClientService ClientService;
+
+<MudDialog>
+    <DialogContent>
+        @if (SavedSudokuGames is not null && SavedSudokuGames!.Any())
+        {
+            <MudTable T="UserSudokuGame"  Dense="true" Items="SavedSudokuGames" SelectedItem="SelectedGame" SelectedItemChanged="async game => await GameTypeChanged.InvokeAsync((SudokuGameTypeEnum.SavedGame, game.Id))">
+                <HeaderContent>
+                    <MudTh>Navn</MudTh>
+                    <MudTh>Oppdatert</MudTh>
+                    <MudTh>Ruter igjen</MudTh>
+                    <MudTh></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd Class="saved-games clm-row-small">@context.Name</MudTd>
+                    <MudTd Class="saved-games clm-row-small">@context.UpdatedOn.ToString("dd-MM-yyyy")</MudTd>
+                    <MudTd Class="saved-games clm-row-small">@context.CellsLeft</MudTd>
+                    <MudTd><MudIconButton Icon="@Icons.Material.Outlined.Delete" OnClick="() => DeleteGameSave(context.Id, context.Name)">Slett</MudIconButton></MudTd>
+                </RowTemplate>
+            </MudTable>
+        }
+    </DialogContent>
+    <DialogActions>
+        <div style="display: flex; flex-direction: row-reverse">
+            <MudButton Variant="Variant.Outlined" OnClick="async () => await GameTypeChanged.InvokeAsync((SudokuGameTypeEnum.NewGame, null))">Start nytt spill</MudButton>
+        </div>
+    </DialogActions>
+</MudDialog>
+
+<style>
+    .saved-games:hover{
+        cursor: pointer;
+    }
+   
+</style>
+
+@code {
+
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!; 
+    
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    
+    [Parameter] public string ClientId { get; set; } = null!;
+    
+    [Parameter] public EventCallback<(SudokuGameTypeEnum type, Guid? Id)> GameTypeChanged { get; set; }
+    
+    [Parameter] public EventCallback<(Guid id, string saveName)> DeleteSave { get; set; }
+    
+    private List<UserSudokuGame>? SavedSudokuGames { get; set; }
+    
+    private UserSudokuGame? SelectedGame { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ClientService.GetUserSavedGames(ClientId);
+        SavedSudokuGames = result?.ToList();
+    }
+    private async Task DeleteGameSave(Guid id, string? saveName)
+    {
+        await DeleteSave.InvokeAsync((id, saveName)!);
+        SavedSudokuGames?.Remove(SavedSudokuGames.FirstOrDefault(x => x.Id == id)!);
+    }
+}

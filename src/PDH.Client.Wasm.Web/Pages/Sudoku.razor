@@ -1,0 +1,65 @@
+﻿@page "/Sudoku"
+@attribute [Authorize]
+@using PDH.Client.Wasm.Web.Components.Sudoku
+@using Microsoft.AspNetCore.Authorization
+@using SudokuNumpad = PDH.Client.Wasm.Web.Components.Sudoku.SudokuNumpad
+
+<div class="sudoku-container">
+    @if (!IsLoading)
+    {
+        <div class="sudoku-board">
+            @if (Board is not null)
+            {
+                <GameBoard
+                    ClientId="@ClientId"
+                    Board="Board"
+                    @bind-SelectedCell="SelectedCell"
+                    BoardActionChanged="PerformBoardAction"
+                    SaveGameChanged="name => SaveSudokuBoard(name)"
+                    GameId="GameId" />
+
+                <SudokuNumpad
+                    SelectedCell="SelectedCell"
+                    SelectedCellChanged="SetNewValueAndAddToHistory" />
+            }
+        </div>
+    }
+    else
+    {
+        <div style="display: flex; justify-content: center; align-items: center; height: 90vh;">
+            <LoadingBar />
+        </div>
+    }
+</div>
+
+<style>
+    h1{
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    
+    .sudoku-container{
+        display: flex;
+        width: 100vw;
+        height: 90vh;
+        justify-content: center;
+        align-items: center;
+        margin-top: 5px;
+    }
+    
+    .sudoku-board{
+        display: flex;
+        justify-content: space-evenly;
+    }
+    
+    @@media only screen and (max-width: 700px) {
+        .sudoku-container{
+            max-height: 100vh;
+            height: max-content;
+        }
+    
+      .sudoku-board{
+          flex-direction: column;
+      }
+    }
+</style>
